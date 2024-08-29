@@ -47,7 +47,7 @@ stages:
 
 - stage: deploy_dev
   displayName: deploy_dev
-  condition: eq(variables['environment'], 'dev')
+  condition: eq(dependencies.map_branch_with_env.outputs['setenv.environment'], 'dev')
   jobs:
     - job: deploy_dev
       steps:
@@ -56,7 +56,7 @@ stages:
 
 - stage: deploy_test
   displayName: deploy_test
-  condition: eq(variables['environment'], 'dev')
+  condition: eq(dependencies.map_branch_with_env.outputs['setenv.environment'], 'dev')
   jobs:
     - job: deploy_test
       steps:
