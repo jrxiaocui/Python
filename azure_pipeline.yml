@@ -42,7 +42,7 @@ stages:
     - job: deploy_dev
       steps:
       - script: |
-          deploy to dev env
+          echo "deploy to dev env"
 
 - stage: deploy_prod
   displayName: deploy_prod
@@ -51,7 +51,7 @@ stages:
     - job: deploy_prod
       steps:
       - script: |
-          deploy to prod env
+          echo "deploy to prod env"
       
       
 
