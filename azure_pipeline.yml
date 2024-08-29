@@ -21,12 +21,37 @@ pr: none
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: map_branch_with_env
+  jobs:
+  - job: map_branch_with_env
+    steps:
+    - checkout: none
+    - script: |
+         branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
+         if [[ $branch == 'dev-1' ]]; then
+          echo "##vso[task.setvariable variable=environment]dev"
+         elif [[ $branch == 'master' ]]; then
+          echo "##vso[task.setvariable variable=environment]prod"
+         fi
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- stage: deploy_dev
+  displayName: deploy_dev
+  condition: eq('${{ parameters.environment }}', 'dev')
+  jobs:
+    - job: deploy_dev
+      steps:
+      - script: |
+          deploy to dev env
+
+- stage: deploy_prod
+  displayName: deploy_prod
+  condition: eq('${{ parameters.environment }}', 'prod')
+  jobs:
+    - job: deploy_prod
+      steps:
+      - script: |
+          deploy to prod env
+      
+      
 
