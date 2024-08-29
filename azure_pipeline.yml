@@ -51,8 +51,7 @@ stages:
     - job: deploy_dev
       steps:
       - script: |
-          echo "deploy to dev env"
-          echo "$(environment)"
+          echo "deploy to $(environment) env"
 
 - stage: deploy_test
   displayName: deploy_test
@@ -62,8 +61,7 @@ stages:
       steps:
       
       - script: |
-          echo "deploy to test env"
-          echo "$(environment)"
+          echo "deploy to $(environment) env"
       
       
 
