@@ -35,6 +35,7 @@ stages:
          echo "Build.Reason: $(Build.Reason)"
          if [ "$(Build.Reason)" == "Manual" ]; then
           echo "##vso[task.setvariable variable=environment;isOutput=true]${{ parameters.environment }}"
+          echo '$(environment)'
          else
           branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
           if [[ $branch == 'dev-1' ]]; then
