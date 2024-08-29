@@ -2,9 +2,21 @@
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
+parameters:
+  - name: environment
+    type: string
+    default: 'dev'
+    values:
+      - dev
+      - prod
 
 trigger:
-- master
+ branches:
+  include:
+  - dev-1
+  - master
+
+pr: none
 
 pool:
   vmImage: ubuntu-latest
