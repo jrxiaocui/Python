@@ -14,7 +14,7 @@ trigger:
  branches:
   include:
   - dev-1
-  - test
+  - test-1
 
 pr: none
 
@@ -43,6 +43,7 @@ stages:
       steps:
       - script: |
           echo "deploy to dev env"
+          echo $(environment)
 
 - stage: deploy_test
   displayName: deploy_test
@@ -52,6 +53,7 @@ stages:
       steps:
       - script: |
           echo "deploy to test env"
+          echo $(environment)
       
       
 
