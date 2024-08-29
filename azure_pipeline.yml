@@ -8,13 +8,13 @@ parameters:
     default: 'dev'
     values:
       - dev
-      - prod
+      - test
 
 trigger:
  branches:
   include:
   - dev-1
-  - master
+  - test
 
 pr: none
 
@@ -31,8 +31,8 @@ stages:
          branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
          if [[ $branch == 'dev-1' ]]; then
           echo "##vso[task.setvariable variable=environment]dev"
-         elif [[ $branch == 'master' ]]; then
-          echo "##vso[task.setvariable variable=environment]prod"
+         elif [[ $branch == 'test-1' ]]; then
+          echo "##vso[task.setvariable variable=environment]test"
          fi
 
 - stage: deploy_dev
@@ -44,14 +44,14 @@ stages:
       - script: |
           echo "deploy to dev env"
 
-- stage: deploy_prod
-  displayName: deploy_prod
-  condition: eq('${{ parameters.environment }}', 'prod')
+- stage: deploy_test
+  displayName: deploy_test
+  condition: eq('${{ parameters.environment }}', 'test')
   jobs:
-    - job: deploy_prod
+    - job: deploy_test
       steps:
       - script: |
-          echo "deploy to prod env"
+          echo "deploy to test env"
       
       
 
