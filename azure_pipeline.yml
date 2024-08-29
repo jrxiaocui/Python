@@ -46,7 +46,7 @@ stages:
 
 - stage: deploy_dev
   displayName: deploy_dev
-  condition: eq('${{ parameters.environment }}', 'dev')
+  condition: eq(variables['environment'], 'dev')
   jobs:
     - job: deploy_dev
       steps:
@@ -55,7 +55,7 @@ stages:
 
 - stage: deploy_test
   displayName: deploy_test
-  condition: eq('${{ parameters.environment }}', 'test')
+  condition: eq(variables['environment'], 'test')
   jobs:
     - job: deploy_test
       steps:
