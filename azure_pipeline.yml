@@ -47,22 +47,22 @@ stages:
 
 - stage: deploy_dev
   displayName: deploy_dev
-  condition: eq(dependencies.map_branch_with_env.outputs['setenv.environment'], 'dev')
+  condition: eq(variables['environment'], 'dev')
   jobs:
     - job: deploy_dev
       steps:
       - script: |
-          echo "deploy to $(environment) env"
+          echo "$(dependencies.map_branch_with_env.outputs['setenv.environment'])"
 
 - stage: deploy_test
   displayName: deploy_test
-  condition: eq(dependencies.map_branch_with_env.outputs['setenv.environment'], 'test')
+  condition: eq(variables['environment'], 'dev')
   jobs:
     - job: deploy_test
       steps:
       
       - script: |
-          echo "deploy to $(environment) env"
+          echo "$(dependencies.map_branch_with_env.outputs['setenv.environment'])"
       
       
 
