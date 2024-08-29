@@ -3,12 +3,15 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 parameters:
-  - name: environment
-    type: string
-    default: 'dev'
-    values:
-      - dev
-      - test
+- name: sourceBranch
+  type: string
+  default: $(Build.SourceBranch)
+- name: environment
+  type: string
+  default: 'dev'
+  values:
+    - dev
+    - test
 
 trigger:
  branches:
@@ -51,6 +54,7 @@ stages:
   jobs:
     - job: deploy_test
       steps:
+      
       - script: |
           echo "deploy to test env"
           echo "$(environment)"
