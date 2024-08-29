@@ -43,7 +43,7 @@ stages:
       steps:
       - script: |
           echo "deploy to dev env"
-          echo $(environment)
+          echo "$(environment)"
 
 - stage: deploy_test
   displayName: deploy_test
@@ -53,7 +53,7 @@ stages:
       steps:
       - script: |
           echo "deploy to test env"
-          echo $(environment)
+          echo "$(environment)"
       
       
 
