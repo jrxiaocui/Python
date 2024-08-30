@@ -77,7 +77,7 @@ stages:
     deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']] 
   jobs:
     - job: deploy_test
-      condition: eq('$(deploy_env)', 'dev')
+      condition: eq('$(deploy_env)', 'test')
       steps:     
       - script: |
           echo "deploy to $(deploy_env) env"
