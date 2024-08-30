@@ -49,9 +49,9 @@ stages:
             echo "##vso[task.setvariable variable=environment;isOutput=true]${{ parameters.environment }}"
           else
             branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
-            if [[ $branch == 'dev-1' ]]; then
+            if [[ $(Build.Reason)" == "IndividualCI" && $branch == 'dev-1' ]]; then
               echo "##vso[task.setvariable variable=environment;isOutput=true]dev"
-            elif [[ $branch == 'test-1' ]]; then  
+            elif [[ $(Build.Reason)" == "IndividualCI" && $branch == 'test-1' ]]; then  
               echo "##vso[task.setvariable variable=environment;isOutput=true]test"
             fi
           fi
