@@ -3,15 +3,16 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 parameters:
-- name: sourceBranch
-  type: string
-  default: $(Build.SourceBranch)
 - name: environment
   type: string
   default: 'dev'
   values:
     - 'dev'
     - 'test'
+
+- name: sourceBranch
+  type: string
+  default: $(Build.SourceBranch)
 
 trigger:
  branches:
@@ -25,46 +26,61 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: map_branch_with_env
+- stage: map_env_with_branch
+  displayName: map_env_with_branch
   jobs:
-  - job: map_branch_with_env
-    steps:
-    - checkout: none
-    - script: |
-         echo "Build.SourceBranch: $(Build.SourceBranch)"
-         echo "Build.Reason: $(Build.Reason)"
-         if [ "$(Build.Reason)" == "Manual" ]; then
-          echo "##vso[task.setvariable variable=environment;isOutput=true]${{ parameters.environment }}"
-         else
-          branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
-          if [[ $branch == 'dev-1' ]]; then
-            echo "##vso[task.setvariable variable=environment;isOutput=true]dev"
-          elif [[ $branch == 'test-1' ]]; then
-            echo "##vso[task.setvariable variable=environment;isOutput=true]test"
+    - job: map_env_with_branch
+      steps:
+        # - script: |
+        #    if [ "$(Build.Reason)" == "Manual" ]; then
+        #      echo "##vso[task.setvariable variable=environment;isOutput=true]$(parameters.environment)"
+        #    else
+        #      branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
+        #      if [[ $branch == 'dev-3.2' ]]; then
+        #        echo "##vso[task.setvariable variable=environment;isOutput=true]dev"
+        #      elif [[ $branch == 'dev-3.0-dev' ]]; then
+        #        echo "##vso[task.setvariable variable=environment;isOutput=true]qas"
+        #      elif [[ $branch == 'master-3.0' ]]; then
+        #        echo "##vso[task.setvariable variable=environment;isOutput=true]prod"
+        #      fi
+        #    fi
+      - script: |
+          if [ "$(Build.Reason)" == "Manual" ]; then
+            echo "##vso[task.setvariable variable=environment;isOutput=true]$(parameters.environment)"
+          else
+            branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
+            if [[ $branch == 'dev-1' ]]; then
+              echo "##vso[task.setvariable variable=environment;isOutput=true]dev"
+            elif [[ $branch == 'test-1' ]]; then  
+              echo "##vso[task.setvariable variable=environment;isOutput=true]test"
+            fi
           fi
-         fi
-      name: setenv
-    - script: |
-        echo "setenv.environment: $(environment)"
-      name: printenv
+          name: map_env_with_branch
+
 - stage: deploy_dev
+  dependsOn: map_env_with_branch
   displayName: deploy_dev
-  condition: eq(dependencies.map_branch_with_env.outputs['setenv.environment'], 'dev')
+  variables:
+    deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']]
+  condition: eq('$(deploy_env)', 'dev')
   jobs:
     - job: deploy_dev
       steps:
-      - script: |
-          echo "$(dependencies.map_branch_with_env.outputs['setenv.environment'])"
-
-- stage: deploy_test
-  displayName: deploy_test
-  condition: eq(dependencies.map_branch_with_env.outputs['setenv.environment'], 'dev')
-  jobs:
-    - job: deploy_test
-      steps:
       
       - script: |
-          echo "$(dependencies.map_branch_with_env.outputs['setenv.environment'])"
+          echo "deploy to $(deploy_env) env"
+
+- stage: deploy_test
+  dependsOn: map_env_with_branch
+  displayName: deploy_test
+  variables:
+    deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']] 
+  condition: eq('$(deploy_env)', 'test')
+  jobs:
+    - job: deploy_test
+      steps:     
+      - script: |
+          echo "deploy to $(deploy_env) env"
       
       
 
