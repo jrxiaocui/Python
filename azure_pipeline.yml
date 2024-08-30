@@ -54,6 +54,7 @@ stages:
 
 - stage: validate
   dependsOn: map_env_with_branch
+  displayName: validate
   jobs:
   - job:
     steps:
