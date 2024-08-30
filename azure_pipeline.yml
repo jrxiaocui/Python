@@ -33,7 +33,7 @@ stages:
       steps:
         # - script: |
         #    if [ "$(Build.Reason)" == "Manual" ]; then
-        #      echo "##vso[task.setvariable variable=environment;isOutput=true]$(parameters.environment)"
+        #      echo "##vso[task.setvariable variable=environment;isOutput=true]${{ parameters.environment }}"
         #    else
         #      branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
         #      if [[ $branch == 'dev-3.2' ]]; then
@@ -46,7 +46,7 @@ stages:
         #    fi
       - script: |
           if [ "$(Build.Reason)" == "Manual" ]; then
-            echo "##vso[task.setvariable variable=environment;isOutput=true]$(parameters.environment)"
+            echo "##vso[task.setvariable variable=environment;isOutput=true]${{ parameters.environment }}"
           else
             branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
             if [[ $branch == 'dev-1' ]]; then
