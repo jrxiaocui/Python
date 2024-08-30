@@ -57,7 +57,7 @@ stages:
   displayName: deploy_dev
   # variables:
   #   deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']]     
-  condition: and(succeeded(),eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'],'dev'))
+  condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'],'dev')
   jobs:
     - job: deploy_dev
       steps:     
