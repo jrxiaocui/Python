@@ -49,20 +49,18 @@ stages:
               fi
             fi
             echo $sourceBranch
-            echo $buildReason
-            echo "deploy_env is $(environment)"
+            echo $buildReason         
         name: map_env_with_branch
 
 - stage: deploy_dev
   dependsOn: map_env_with_branch
   displayName: deploy_dev
   variables:
-    deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']]
+    deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']]     
   jobs:
     - job: deploy_dev
-      condition: eq('$(deploy_env)', 'dev')
-      steps:
-      
+      # condition: eq('$(deploy_env)', 'dev')
+      steps:     
       - script: |
           echo "deploy to $(deploy_env) env"
 
@@ -73,7 +71,7 @@ stages:
     deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']] 
   jobs:
     - job: deploy_test
-      condition: eq('$(deploy_env)', 'test')
+      # condition: eq('$(deploy_env)', 'test')
       steps:     
       - script: |
           echo "deploy to $(deploy_env) env"
