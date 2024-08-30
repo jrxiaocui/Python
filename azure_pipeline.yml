@@ -63,7 +63,8 @@ stages:
 
 
 - stage: deploy_dev
-  dependsOn: map_env_with_branch
+  dependsOn: 
+  - map_env_with_branch
   displayName: deploy_dev
   # variables:
   #   deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']]     
