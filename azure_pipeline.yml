@@ -62,7 +62,7 @@ stages:
   displayName: deploy_dev
   variables:
     deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']]
-  condition: eq('$(deploy_env)', 'dev')
+  # condition: eq('$(deploy_env)', 'dev')
   jobs:
     - job: deploy_dev
       steps:
