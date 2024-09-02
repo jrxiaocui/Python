@@ -66,8 +66,11 @@ stages:
 
 # the build stage
 - template: templates/stages/build.yml
+  variables:
+   - name: deploy_env
+     value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ] 
   parameters:
-    environment: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
+    environment: $(deploy_env)
 
 - stage: deploy_dev
   dependsOn: map_env_with_branch
