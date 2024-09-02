@@ -68,19 +68,24 @@ stages:
 - stage: build
   displayName: build
   dependsOn: map_env_with_branch
-  variables:
-   - name: deploy_env
-     value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
-  # jobs:
-  # - template: templates/stages/build.yml 
-  #   parameters:
-  #     environment: $(deploy_env)
   jobs:
-   - job: build
-     steps:
-     - script: |
-        echo "build for $(deploy_env)"
+  - job: use_nodejs
+    steps:
+    - task: NodeTool@0
+      displayName: 'Use Node.js tool'
+      inputs:
+        versionSpec: '20.14.x'
 
+    - script: |
+        echo 'build dev'
+      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'dev')  
+      displayName: 'Build dev'
+
+    - script: |
+        echo 'build qas'
+      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
+      displayName: 'Build qas'
+  
 - stage: deploy_dev
   dependsOn: map_env_with_branch
   displayName: deploy_dev
