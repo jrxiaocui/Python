@@ -68,10 +68,10 @@ stages:
   dependsOn: map_env_with_branch
   displayName: deploy_dev
   
-  variables:
-       - name: deploy_env
-         value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
-  condition: eq(variables.deploy_dev, 'dev')
+  # variables:
+  #      - name: deploy_env
+  #        value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
+  condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'dev')
   jobs:
     - job: deploy_dev
        
