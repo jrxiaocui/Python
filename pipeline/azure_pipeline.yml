@@ -75,8 +75,11 @@ stages:
   # - template: templates/stages/build.yml 
   #   parameters:
   #     environment: $(deploy_env)
-   - script: |
-      echo "build for $(deploy_env)"
+  jobs:
+   - job: build
+     steps:
+     - script: |
+        echo "build for $(deploy_env)"
 
 - stage: deploy_dev
   dependsOn: map_env_with_branch
