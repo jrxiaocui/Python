@@ -3,12 +3,19 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 parameters:
-  - name: environment
-    type: string
-    default: 'dev'
-    values:
-      - dev
-      - test
+- name: environment
+  type: string
+  default: 'dev'
+  values:
+  - 'dev'
+  - 'test'
+
+- name: sourceBranch
+  type: string
+  default: $(Build.SourceBranch)
+- name: buildReason
+  type: string
+  default: $(Build.Reason)
 
 trigger:
  branches:
@@ -22,36 +29,76 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: map_branch_with_env
+- stage: map_env_with_branch
+  displayName: map_env_with_branch
   jobs:
-  - job: map_branch_with_env
-    steps:
-    - checkout: none
-    - script: |
-         branch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
-         if [[ $branch == 'dev-1' ]]; then
-          echo "##vso[task.setvariable variable=environment]dev"
-         elif [[ $branch == 'test-1' ]]; then
-          echo "##vso[task.setvariable variable=environment]test"
-         fi
+    - job: map_env_with_branch
+      steps:
+      - task: CmdLine@2
+        inputs:         
+          script: |
+            if [ "$(Build.Reason)" == "Manual" ]; then
+              echo "##vso[task.setvariable variable=environment;isOutput=true]${{ parameters.environment }}"
+            else
+              sourceBranch=$(echo $(Build.SourceBranch) | sed 's|refs/heads/||')
+              buildReason=$(Build.Reason)
+              if [[ $buildReason == 'IndividualCI' && $sourceBranch == 'dev-1' ]]; then
+                echo "##vso[task.setvariable variable=environment;isOutput=true]dev"
+              elif [[ $buildReason == 'IndividualCI' && $sourceBranch == 'test-1' ]]; then  
+                echo "##vso[task.setvariable variable=environment;isOutput=true]test"
+              fi
+            fi
+            echo $sourceBranch
+            echo $buildReason         
+        name: map_env_with_branch
 
+# the build stage
+- stage: build
+  displayName: build
+  dependsOn: map_env_with_branch
+  jobs:
+  - job: use_nodejs
+    steps:
+    - task: NodeTool@0
+      displayName: 'Use Node.js tool'
+      inputs:
+        versionSpec: '20.14.x'
+   
+  - job: build_dev  
+    dependsOn: use_nodejs
+    condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'dev')  
+    displayName: 'Build dev'
+    steps:
+    - script: |
+        echo 'build dev'
+  
+  - job: build_qas
+    dependsOn: use_nodejs
+    condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
+    steps:
+    - script: |
+        echo 'build qas'
+      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
+      displayName: 'Build test'
+  
 - stage: deploy_dev
+  dependsOn: [map_env_with_branch,build]
   displayName: deploy_dev
-  condition: eq('${{ parameters.environment }}', 'dev')
   jobs:
     - job: deploy_dev
-      steps:
+      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'dev')
+   
+      steps:     
       - script: |
           echo "deploy to dev env"
 
 - stage: deploy_test
+  dependsOn: [map_env_with_branch,build]
   displayName: deploy_test
-  condition: eq('${{ parameters.environment }}', 'test')
   jobs:
     - job: deploy_test
-      steps:
+      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
+      steps:     
       - script: |
           echo "deploy to test env"
       
-      
-
