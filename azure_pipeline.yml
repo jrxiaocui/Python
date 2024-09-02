@@ -59,7 +59,7 @@ stages:
   - job:
     steps:
     - script: |
-        echo '$[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]'
+        echo '$[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.map_env_with_branch.environment'] ]'
 
 
 - stage: deploy_dev
