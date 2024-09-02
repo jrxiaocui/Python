@@ -14,6 +14,7 @@ parameters:
 stages:
 - stage: Build
   condition: always()
+  dependsOn: map_env_with_branch
   displayName: 'Install NodeJS and Build'
 
   jobs:
@@ -27,26 +28,13 @@ stages:
     
     - script: |
         npm install -g yarn
-        yarn cache clean
-        yarn install --frozen-lockfile
-        yarn build:dev adm
-      condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/dev-3.2'), eq('${{ parameters.environment }}', 'dev'))
+      condition: eq('${{ parameters.environment }}', 'dev')
       displayName: 'Build dev'
 
     - script: |
         npm cache clean -f
-        npm ci
-        npm --version
-        npm run build-all-qa
-      condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/dev-3.0-dev'), eq('${{ parameters.environment }}', 'qas'))
+      condition: eq('${{ parameters.environment }}', 'qas')
       displayName: 'Build qas'
-      
-    - script: |
-        npm ci
-        npm --version
-        npm run build-all-prod
-      condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/main-3.0'), eq('${{ parameters.environment }}', 'prod')) 
-      displayName: 'Build prod'
       
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Pipeline Artifact'
