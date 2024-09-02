@@ -75,11 +75,10 @@ stages:
   - job: build_qas
     dependsOn: use_nodejs
     condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
+    displayName: 'Build test'
     steps:
     - script: |
-        echo 'build qas'
-      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
-      displayName: 'Build test'
+        echo 'build qas'        
   
 - stage: deploy_dev
   dependsOn: [map_env_with_branch,build]
