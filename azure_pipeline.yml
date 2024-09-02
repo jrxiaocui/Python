@@ -65,7 +65,7 @@ stages:
         echo '$(deploy_env)'
 
 - stage: deploy_dev
-  dependsOn: validate
+  dependsOn: map_env_with_branch
   displayName: deploy_dev
   
   jobs:
