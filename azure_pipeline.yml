@@ -73,21 +73,21 @@ stages:
       variables:
        - name: deploy_env
          value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
-      condition: eq('$(deploy_env)', 'dev')
+      # condition: eq('$(deploy_env)', 'dev')
       steps:     
       - script: |
           echo "deploy to $(deploy_env) env"
 
-- stage: deploy_test
-  dependsOn: validate
-  displayName: deploy_test
+# - stage: deploy_test
+#   dependsOn: validate
+#   displayName: deploy_test
   # variables:
   #   - name: deploy_env
   #     value: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ] 
   # condition: eq('$(deploy_env)', 'test')
-  jobs:
-    - job: deploy_test
-      steps:     
-      - script: |
-          echo "deploy to $(deploy_env) env"
+  # jobs:
+  #   - job: deploy_test
+  #     steps:     
+  #     - script: |
+  #         echo "deploy to $(deploy_env) env"
       
