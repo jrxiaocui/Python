@@ -11,36 +11,31 @@ parameters:
   type: string
   default: 'succeeded()'
 
-stages:
-- stage: Build
-  condition: always()
-  displayName: 'Install NodeJS and Build'
-
-  jobs:
-  - job: Build
-    displayName: 'Install nodejs and Build'
-    steps:
-    - task: NodeTool@0
-      displayName: 'Use Node.js tool'
-      inputs:
-        versionSpec: '20.14.x'
+jobs:
+- job: Build
+  displayName: 'Install nodejs and Build'
+  steps:
+  - task: NodeTool@0
+    displayName: 'Use Node.js tool'
+    inputs:
+      versionSpec: '20.14.x'
     
-    - script: |
-        npm install -g yarn
-      condition: eq('${{ parameters.environment }}', 'dev')
-      displayName: 'Build dev'
+  - script: |
+      npm install -g yarn
+    condition: eq('${{ parameters.environment }}', 'dev')
+    displayName: 'Build dev'
 
-    - script: |
-        npm cache clean -f
-      condition: eq('${{ parameters.environment }}', 'qas')
-      displayName: 'Build qas'
+  - script: |
+      npm cache clean -f
+    condition: eq('${{ parameters.environment }}', 'qas')
+    displayName: 'Build qas'
       
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Pipeline Artifact'
-      inputs:
-        targetPath: '$(System.DefaultWorkingDirectory)/dist'
-        artifact: 'blueprint'
-        publishLocation: 'pipeline'
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Pipeline Artifact'
+    inputs:
+      targetPath: '$(System.DefaultWorkingDirectory)/dist'
+      artifact: 'blueprint'
+      publishLocation: 'pipeline'
 
 
        
