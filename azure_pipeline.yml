@@ -80,7 +80,7 @@ stages:
           echo "deploy to dev env"
 
 - stage: deploy_test
-  dependsOn: validate
+  dependsOn: map_env_with_branch
   displayName: deploy_test
   # variables:
   #   - name: deploy_env
