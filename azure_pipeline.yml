@@ -69,21 +69,23 @@ stages:
   dependsOn: 
   - map_env_with_branch
   displayName: deploy_dev
-  # variables:
-  #   deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']]     
-  condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'],'dev')
+  variables:
+    - name: deploy_env
+      value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
+  condition: eq('$(deploy_env)', 'dev')
   jobs:
     - job: deploy_dev
       steps:     
       - script: |
-          echo "deploy to $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']] env"
+          echo "deploy to $(deploy_env) env"
 
 - stage: deploy_test
   dependsOn: map_env_with_branch
   displayName: deploy_test
   variables:
-    deploy_env: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment']] 
-  condition: eq('variables.deploy_env', 'test')
+    - name: deploy_env
+      value: $[stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ] 
+  condition: eq('$(deploy_env)', 'test')
   jobs:
     - job: deploy_test
       steps:     
