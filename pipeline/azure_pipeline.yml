@@ -78,19 +78,21 @@ stages:
     steps:
     - script: |
         echo 'build qas'
-      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
-      displayName: 'Build test'
+         displayName: 'Build test'
   
 - stage: deploy_dev
   dependsOn: [map_env_with_branch,build]
   displayName: deploy_dev
   jobs:
-    - job: deploy_dev
+    - deployment: deploy_dev
       condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'dev')
-   
-      steps:     
-      - script: |
-          echo "deploy to dev env"
+      environment: dev
+      strategy:
+        runOnce:
+          deploy:          
+            steps:     
+            - script: |
+                  echo "deploy to dev env"
 
 - stage: deploy_test
   dependsOn: [map_env_with_branch,build]
