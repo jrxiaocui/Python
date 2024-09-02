@@ -57,9 +57,12 @@ stages:
   displayName: validate
   jobs:
   - job:
+    variables: 
+     - name: deploy_env
+       value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
     steps:
     - script: |
-        echo '$($[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ])'
+        echo '$(deploy_env)'
 
 
 - stage: deploy_dev
