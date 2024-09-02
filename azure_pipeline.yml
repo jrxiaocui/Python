@@ -53,7 +53,7 @@ stages:
         name: map_env_with_branch
 
 - stage: validate
-  dependsOn: map_env_with_branch
+  # dependsOn: map_env_with_branch
   displayName: validate
   jobs:
   - job:
@@ -65,11 +65,11 @@ stages:
         echo '$(deploy_env)'
 
 - stage: deploy_dev
-  dependsOn: map_env_with_branch
+  dependsOn: validate
   displayName: deploy_dev
-  variables:
-    - name: deploy_env
-      value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
+  # variables:
+  #   - name: deploy_env
+  #     value: $[ stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'] ]
   condition: eq('$(deploy_env)', 'dev')
   jobs:
     - job: deploy_dev
