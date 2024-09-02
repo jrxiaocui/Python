@@ -14,7 +14,6 @@ parameters:
 stages:
 - stage: Build
   condition: always()
-  dependsOn: map_env_with_branch
   displayName: 'Install NodeJS and Build'
 
   jobs:
