@@ -75,16 +75,21 @@ stages:
       displayName: 'Use Node.js tool'
       inputs:
         versionSpec: '20.14.x'
-
+   
+  - job: build_dev  
+    condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'dev')  
+    displayName: 'Build dev'
+    steps:
     - script: |
         echo 'build dev'
-      condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'dev')  
-      displayName: 'Build dev'
-
+  
+  - job: build_qas
+    condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
+    steps:
     - script: |
         echo 'build qas'
       condition: eq(stageDependencies.map_env_with_branch.map_env_with_branch.outputs['map_env_with_branch.environment'], 'test')  
-      displayName: 'Build qas'
+      displayName: 'Build test'
   
 - stage: deploy_dev
   dependsOn: map_env_with_branch
